@@ -8,43 +8,20 @@ from tensorflow.keras import layers
 
 import sklearn as skl
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import   MinMaxScaler
 from imblearn.over_sampling import RandomOverSampler
 
 ##read training data header=0 because file has columns name at row 0
-dataset=pd.read_csv('..\Dataset\strokes.csv',header=0)
-
-##fill all empty cell in bmi column with mean value
-##And fill all empty cell in smoking_status column with Unknown value
-dataset.bmi.fillna(dataset.bmi.mean(),inplace=True)
-dataset.smoking_status.fillna('Unknown',inplace=True)
-
-##count number of values for each class in gender and smoking_status columns 
-columns_with_strin_value = ['gender', 'smoking_status', 'ever_married']
-for column_name in columns_with_strin_value:
-  print(dataset[column_name].value_counts(),'\n')
-
-##replace Other value in gender column with Female
-dataset["gender"] = dataset["gender"].replace(["Other"],"Female")
-
-##give different value for each class in gender and smoking status columns 
-encoder=LabelEncoder()
-for column_name in columns_with_strin_value:
-  dataset[column_name]=encoder.fit_transform(dataset[column_name])
-
-##drop columns with bad correlations
-dataset = dataset.drop('work_type',axis=1)
-dataset = dataset.drop('Residence_type',axis=1)
-
-##MinMax Scaling for feature that not scale to be in range 0 to 1
-for feature in ['age', 'avg_glucose_level', 'bmi']: 
-    dataset[feature] = dataset[feature].astype('int64')
-    dataset[feature] = MinMaxScaler(feature_range=(0, 1)).fit_transform(dataset[[feature]])
+dataset=pd.read_csv(r"..\Dataset\diabetes.csv",header=0)
 
 ##splite dataset into features and labels
 dataset_features=dataset.copy()
-dataset_labels=dataset_features.pop("stroke")
+dataset_labels=dataset_features.pop("Outcome")
+
+##MinMax Scaling for feature that not scale to be in range 0 to 1
+##for (feature_name, feature_data) in dataset_features.iteritems():
+##    dataset_features[feature_name] = dataset_features[feature_name].astype('int64')
+##    dataset_features[feature_name] = MinMaxScaler(feature_range=(0, 1)).fit_transform(dataset_features[[feature_name]])
 
 ##oversampling for dataset so that it will be balance(number of records for each class is equal) 
 ros = RandomOverSampler()
@@ -53,16 +30,14 @@ dataset_features, dataset_labels = ros.fit_resample(dataset_features, dataset_la
 ##splite features and labels into training and valdiation
 training_features,valdiation_features,training_labels,valdiation_labels = train_test_split(dataset_features,dataset_labels
                                                                                ,test_size=0.15,random_state=42)
+
 ##convert each row to array
 training_features = np.array(training_features)
 valdiation_features =  np.array(valdiation_features)
 
 ##setup model 
 model = keras.Sequential([
-    layers.Dense(40,input_dim =8 ,activation='relu'),
-    layers.Dense(30,activation='relu'),
-    layers.Dense(25,activation='relu'),
-    layers.Dense(20,activation='relu'),
+    layers.Dense(20,input_dim = 8 ,activation='relu'),
     layers.Dense(15,activation='relu'),
     layers.Dense(10,activation='relu'),
     layers.Dense(5,activation='relu'),
@@ -77,7 +52,7 @@ model.compile(loss = tf.keras.losses.MeanSquaredError(),
 
 ##trainign of the model
 ##model feeding ;epochs=number of iterations over training data 
-model.fit(training_features, training_labels, epochs=20)
+model.fit(training_features, training_labels, epochs=50, batch_size = 1)
 
 ##Evaluate accuracy for test data
 valdiation_loss, valdiation_acc, valdiation_precision, valdiation_recall = model.evaluate(valdiation_features,  valdiation_labels, verbose=2)
@@ -86,11 +61,10 @@ print('Valdiation precision:', valdiation_precision)
 print('Valdiation recall:', valdiation_recall)
 print('Valdiation f1 scor:', (2*valdiation_precision*valdiation_recall)/( valdiation_precision+valdiation_recall))
 
-
-data0 = [[1,3,0,0,0,95.12,18,0]]
-data1 = [[0,76,0,0,0,112.9,16.9,0]]
-print('predict of data 0 = ',model.predict(data0))
-print('predict of data 1 = ',model.predict(data1))
+#data0 = [[3,126,88,41,235,39.3,0.704,27],[5,88,66,21,23,24.4,0.342,30],[5,78,48,0,0,33.7,0.654,25]]
+#data1 = [[7,196,90,0,0,39.8,0.451,41],[8,108,70,0,0,30.5,0.955,33],[8,120,0,0,0,30,0.183,38]]
+#print('predict of data 0 = ',model.predict(data0))
+#print('predict of data 1 = ',model.predict(data1))
 
 ##save the model as .h5 file
-model.save(r'..\Models\stork_model.h5')
+model.save(r'..\Models\diabetes_model.h5')
