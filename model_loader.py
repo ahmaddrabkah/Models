@@ -6,11 +6,16 @@ from flask import request
 
 app = Flask(__name__)
 
+@app.route('/predict',methods=['GET'])
+def get():
+    return 'Hello from the Backend'
+
+
 @app.route('/predict',methods=['POST'])
 def predict():
     model_name = request.json['modelName']
     data =  request.json['data']
-    model = load_model("Models\\"+model_name+".h5")
+    model = load_model("Models/"+model_name+".h5")
     data_feauter = [data]
     pred_value = model.predict(data_feauter)
     if pred_value[0][0] >= 0.5 :
