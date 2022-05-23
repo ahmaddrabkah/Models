@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'diagnoseme-models'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B6FF8E76D4BB4580BC420D189467B2B8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_49210B05FDB84371BDC0873D5A5B9648 }}
