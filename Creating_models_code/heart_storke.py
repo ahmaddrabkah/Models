@@ -37,11 +37,6 @@ for column_name in columns_with_string_value:
 dataset = dataset.drop('work_type',axis=1)
 dataset = dataset.drop('Residence_type',axis=1)
 
-##MinMax Scaling for feature that not scale to be in range 0 to 1
-##for feature in ['age', 'avg_glucose_level', 'bmi']: 
-##    dataset[feature] = dataset[feature].astype('int64')
-##    dataset[feature] = MinMaxScaler(feature_range=(0, 1)).fit_transform(dataset[[feature]])
-
 ##splite dataset into features and labels
 dataset_features=dataset.copy()
 dataset_labels=dataset_features.pop("stroke")
@@ -82,12 +77,6 @@ print('\nValdiation accuracy:', valdiation_acc)
 print('Valdiation precision:', valdiation_precision)
 print('Valdiation recall:', valdiation_recall)
 print('Valdiation f1 scor:', (2*valdiation_precision*valdiation_recall)/( valdiation_precision+valdiation_recall))
-
-
-data0 = [[1,3,0,0,0,95.12,18,0],[0,67,0,0,1,60.84,24.5,2],[1,27,0,0,1,82.9,25,0]]
-data1 = [[0,76,0,0,0,112.9,16.9,0],[1,80,0,1,1,105.92,32.5,2],[0,49,0,0,1,171.23,34.4,3]]
-print('predict of data 0 = ',model.predict(data0))
-print('predict of data 1 = ',model.predict(data1))
 
 ##save the model as .h5 file
 model.save(r'..\Models\heart_stroke_model.h5')

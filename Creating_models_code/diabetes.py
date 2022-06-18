@@ -18,11 +18,6 @@ dataset=pd.read_csv(r"..\Dataset\diabetes.csv",header=0)
 dataset_features=dataset.copy()
 dataset_labels=dataset_features.pop("Outcome")
 
-##MinMax Scaling for feature that not scale to be in range 0 to 1
-##for (feature_name, feature_data) in dataset_features.iteritems():
-##    dataset_features[feature_name] = dataset_features[feature_name].astype('int64')
-##    dataset_features[feature_name] = MinMaxScaler(feature_range=(0, 1)).fit_transform(dataset_features[[feature_name]])
-
 ##oversampling for dataset so that it will be balance(number of records for each class is equal) 
 ros = RandomOverSampler()
 dataset_features, dataset_labels = ros.fit_resample(dataset_features, dataset_labels)
@@ -60,11 +55,6 @@ print('\nValdiation accuracy:', valdiation_acc)
 print('Valdiation precision:', valdiation_precision)
 print('Valdiation recall:', valdiation_recall)
 print('Valdiation f1 scor:', (2*valdiation_precision*valdiation_recall)/( valdiation_precision+valdiation_recall))
-
-#data0 = [[3,126,88,41,235,39.3,0.704,27],[5,88,66,21,23,24.4,0.342,30],[5,78,48,0,0,33.7,0.654,25]]
-#data1 = [[7,196,90,0,0,39.8,0.451,41],[8,108,70,0,0,30.5,0.955,33],[8,120,0,0,0,30,0.183,38]]
-#print('predict of data 0 = ',model.predict(data0))
-#print('predict of data 1 = ',model.predict(data1))
 
 ##save the model as .h5 file
 model.save(r'..\Models\diabetes_model.h5')
